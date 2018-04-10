@@ -6,6 +6,40 @@ class Common_mdl extends CI_Model
         parent::__construct();
     }
 
+    function singleImageUpload($upload_name,$extension,$bnr)
+    {
+        
+        $config['upload_path'] = './assets/image/';
+        $config['allowed_types'] = '*';
+        if($bnr == 2)
+        {
+            $config['max_width'] = '2000';
+            $config['max_height'] = '2000';
+        }
+        elseif ($bnr == 1)
+        {}
+        $config['file_name'] = rand(0,9999).'_'.date('YmdHis').".".$extension;
+        // $this->upload->initialize($config);
+        $this->load->library('upload', $config);
+        if ( ! $this->upload->do_upload($upload_name))
+        {
+            $arrayRetutn['upload'] = 'False';
+            $arrayRetutn['error'] = $this->upload->display_errors();
+        }
+        else
+        {
+            $arrayRetutn['upload'] = 'True';
+            $arrayRetutn['data'] = $this->upload->data();
+        }
+         //echo '<pre>';print_r($arrayRetutn);echo '</pre>'; die;
+        return $arrayRetutn;
+    }
+
+    function login($username, $password) {
+        $query = $this->db->query("SELECT * FROM user WHERE (`username` = '".$username."' OR `email` = '".$username."') AND `password` = '".md5($password)."'");
+        return $query->row_array();
+    }
+
     function query($query="",$is_single_row=false)
     {
         $q = $this->db->query($query);
